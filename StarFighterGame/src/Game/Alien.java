@@ -9,10 +9,12 @@ public class Alien extends MovingObject {
 	private Image image;
 	private double counter = 0;
 	private int health;
+	private int randNum;
 
-	Alien(float posX, float posY, float velX, float velY, int width, int height, int health) {
+	Alien(float posX, float posY, float velX, float velY, int width, int height, int health, int randNum) {
 		super(posX, posY, velX, velY, width, height);
 		this.health = health;
+		this.randNum = randNum;
 
 		try {
 			image = ImageIO.read(getClass().getResource("/images/alien.jpg"));
@@ -35,7 +37,7 @@ public class Alien extends MovingObject {
 	}
 	
 	public void move(float velX, float velY, float speed) {
-		counter += .0025 + (.0005 * (getWidth() / 10));
+		counter += .0025 + (.0005 * randNum);
 		setVelX((float)Math.sin(counter));
 		setPos(getPosX() + getVelX() / 2, getPosY() + getVelY() / 2);
 	}

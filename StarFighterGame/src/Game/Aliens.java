@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Aliens {
 	private ArrayList<Alien> aliens = new ArrayList<Alien>();
 	public boolean over;
-	private double counter = Math.PI / 2;
+	public double counter = Math.PI / 2;
 	
 	public Aliens() {
 	}
@@ -14,7 +14,7 @@ public class Aliens {
 	public void add(Alien alien) {
 		aliens.add(alien);
 		alien.setCounter(counter);
-		if (aliens.size() % 10 == 0 && aliens.size() != 1) counter += .1;
+		if (aliens.size() % 10 == 0 && aliens.size() != 1) counter += .05;
 	}
 
 	public void draw(Graphics window, int rotation) {

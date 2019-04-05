@@ -19,7 +19,7 @@ public class Game extends Canvas implements KeyListener, Runnable {
 	private BufferedImage back;
 	private int shootTimer = 0;
 	private int rotation = 270;
-	private int level = 3;
+	private int level = 4;
 	
 	private Thread thread;
 
@@ -142,17 +142,19 @@ public class Game extends Canvas implements KeyListener, Runnable {
 	}
 	
 	private void loadAliens() {
+		aliens.counter = Math.PI / 2;
 		if (level % 5 == 0) {
 			float health = level * 2;
-			Alien alien = new Alien(450, 50, 0, 0.02F, 100, 100, (int)health);
+			Alien alien = new Alien(450, 50, 0, 0.02F, 100, 100, (int)health, 0);
 			aliens.add(alien);
 		}
 		else {
 			int health = level % 5;
 			for (int i = 0; i < level; i++) {
-				int size = (int)(10 * Math.ceil((health % 5 + 2) / 2));
+				int size = (int)(10 * ((health % 5 + 2) / 2.0F));
+				int rand = (int)(Math.random() * 10);
 				for (int j = 0; j < 10; j++) {
-					Alien alien = new Alien((250 - (size / 2)) + (j * 60), (float)(size + (i * 60)), 0, 0.05F, size, size, health);
+					Alien alien = new Alien((250 - (size / 2)) + (j * 60), (float)(-size + (i * 60)), 0, 0.05F + (level / 500), size, size, health, rand);
 					aliens.add(alien);
 				}
 				health--;
