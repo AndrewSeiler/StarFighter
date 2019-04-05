@@ -1,7 +1,7 @@
 package Game;
 
 public interface Movable {
-	void setPos(int posX, int posY);
+	void setPos(float posX, float posY);
 
 	void setPosX(float posX);
 

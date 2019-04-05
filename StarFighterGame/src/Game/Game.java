@@ -19,7 +19,7 @@ public class Game extends Canvas implements KeyListener, Runnable {
 	private BufferedImage back;
 	private int shootTimer = 0;
 	private int rotation = 270;
-	private int level = 4;
+	private int level = 3;
 	
 	private Thread thread;
 
@@ -41,10 +41,15 @@ public class Game extends Canvas implements KeyListener, Runnable {
 	}
 
 	public void update(Graphics window) {
-		paint(window);
 		if (shootTimer > 0) {
 			shootTimer--;
 		}
+		if (aliens.getList().isEmpty()) {
+			System.out.println(level);
+			level++;
+			loadAliens();
+		}
+		paint(window);
 	}
 
 	public void paint(Graphics window) {
@@ -57,10 +62,12 @@ public class Game extends Canvas implements KeyListener, Runnable {
 		float x = (float)Math.cos(Math.toRadians(rotation));
 		float y = (float)Math.sin(Math.toRadians(rotation));
 		if (keys[0]) {
-			ship.move(y, -x, 0.01F);
+			rotation--;
+			rotation %= 360;
 		}
 		else if (keys[1]) {
-			ship.move(-y, x, 0.01F);
+			rotation++;
+			rotation %= 360;
 		}
 		if (keys[2]) {
 			ship.move(x, y, 1.5F);
@@ -68,19 +75,8 @@ public class Game extends Canvas implements KeyListener, Runnable {
 		else if (keys[3]) {
 			ship.move(-x, -y, 1.5F);
 		}
-		if (!keys[0] && !keys[1] && !keys[2] && !keys[3]) {
-			ship.move(x, y, 0.1F);
-		}
-		if (keys[5]) {
-			rotation--;
-			rotation %= 360;
-		}
-		else if (keys[6]) {
-			rotation++;
-			rotation %= 360;
-		}
 		if (keys[4] && shootTimer == 0) {
-			shootTimer = 200;
+			shootTimer = 50;
 			float c = (float) Math.cos(Math.toRadians(rotation));
 			float d = (float) Math.sin(Math.toRadians(rotation));
 			Bullet bullet = new Bullet(ship.getPosX() + (ship.getWidth() / 2) - 1, ship.getPosY() + (ship.getHeight() / 2) - 1, c, d, 2, 2);
@@ -92,8 +88,9 @@ public class Game extends Canvas implements KeyListener, Runnable {
 		bullets.cleanUp();
 		
 		if (aliens.over) {
-			System.out.println("You Lose!");
+			System.out.println("You Lose (Aliens Won)!");
 			stop();
+			System.exit(0);
 			return;
 		}
 		
@@ -105,26 +102,29 @@ public class Game extends Canvas implements KeyListener, Runnable {
 		for (Alien alien : aliens.getList()) {
 			float aPX = alien.getPosX();
 			float aPY = alien.getPosY();
+			float aW = alien.getWidth();
+			float aH = alien.getHeight();
 			for (Bullet bullet : bullets.getList()) {
 				float bPX = bullet.getPosX();
 				float bPY = bullet.getPosY();
-				if (bPX - aPX >= 1 - bullet.getWidth() && bPX - aPX < 31) {
-					if (bPY - aPY >= 1 - bullet.getHeight() && bPY - aPY < 30) {
+				if (bPX - aPX >= 1 - bullet.getWidth() && bPX - aPX < aW) {
+					if (bPY - aPY >= 1 - bullet.getHeight() && bPY - aPY < aH) {
 						tempA.add(alien);
 						tempB.add(bullet);
 					}
 				}
 			}
-			if (sPX - aPX >= 1 - ship.getWidth() && sPX - aPX < 31) {
-				if (sPY - aPY >= 1 - ship.getHeight() && sPY - aPY < 30) {
-					System.out.println("You Lose!");
+			if (sPX - aPX >= 1 - ship.getWidth() && sPX - aPX < aW) {
+				if (sPY - aPY >= 1 - ship.getHeight() && sPY - aPY < aH) {
+					System.out.println("You Lose (Hit by Alien)!");
 					stop();
+					System.exit(0);
 					return;
 				}
 			}
 		}
 		for (Alien alien : tempA) {
-			aliens.remove(alien);
+			alien.decHealth(1);
 		}
 		for (Bullet bullet : tempB) {
 			bullets.remove(bullet);
@@ -139,17 +139,24 @@ public class Game extends Canvas implements KeyListener, Runnable {
 		
 		twoDGraph.drawImage(back, null, 0, 0);
 		
-		if (aliens.getList().size() == 0) {
-			System.out.println("You Win!");
-			stop();
-		}
-		
 	}
 	
 	private void loadAliens() {
-		for (int i = 0; i < level * 10; i++) {
-			Alien alien = new Alien(10 + ((i % 10) * 60), (float)(10 + (Math.floor(i / 10) * 60)), 0, 0.05F, 30, 30);
+		if (level % 5 == 0) {
+			float health = level * 2;
+			Alien alien = new Alien(450, 50, 0, 0.02F, 100, 100, (int)health);
 			aliens.add(alien);
+		}
+		else {
+			int health = level % 5;
+			for (int i = 0; i < level; i++) {
+				int size = (int)(10 * Math.ceil((health % 5 + 2) / 2));
+				for (int j = 0; j < 10; j++) {
+					Alien alien = new Alien((250 - (size / 2)) + (j * 60), (float)(size + (i * 60)), 0, 0.05F, size, size, health);
+					aliens.add(alien);
+				}
+				health--;
+			}
 		}
 	}
 	
@@ -173,12 +180,6 @@ public class Game extends Canvas implements KeyListener, Runnable {
 		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 			keys[4] = true;
 		}
-		if (e.getKeyChar() == 'a') {
-			keys[5] = true;
-		}
-		if (e.getKeyChar() == 's') {
-			keys[6] = true;
-		}
 		repaint();
 	}
 
@@ -198,17 +199,10 @@ public class Game extends Canvas implements KeyListener, Runnable {
 		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 			keys[4] = false;
 		}
-		if (e.getKeyChar() == 'a') {
-			keys[5] = false;
-		}
-		if (e.getKeyChar() == 's') {
-			keys[6] = false;
-		}
 		repaint();
 	}
 
-	public void keyTyped(KeyEvent e) {
-	}
+	public void keyTyped(KeyEvent e) {}
 
 	public void run() {
 		try {

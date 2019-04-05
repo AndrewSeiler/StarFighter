@@ -7,10 +7,12 @@ import javax.imageio.ImageIO;
 
 public class Alien extends MovingObject {
 	private Image image;
-	private double counter = 0; 
+	private double counter = 0;
+	private int health;
 
-	Alien(float posX, float posY, float velX, float velY, int width, int height) {
+	Alien(float posX, float posY, float velX, float velY, int width, int height, int health) {
 		super(posX, posY, velX, velY, width, height);
+		this.health = health;
 
 		try {
 			image = ImageIO.read(getClass().getResource("/images/alien.jpg"));
@@ -25,18 +27,20 @@ public class Alien extends MovingObject {
 		return counter;
 	}
 	
+	public void decHealth(int dec) {
+		this.health -= dec;
+	}
+	public int getHealth() {
+		return health;
+	}
+	
 	public void move(float velX, float velY, float speed) {
-		counter += .0025;
+		counter += .0025 + (.0005 * (getWidth() / 10));
 		setVelX((float)Math.sin(counter));
-		setPosX(getPosX() + getVelX() / 2);
-		setPosY(getPosY() + getVelY() / 2);
+		setPos(getPosX() + getVelX() / 2, getPosY() + getVelY() / 2);
 	}
 	
  	public void draw(Graphics window, int rotation) {
-		//Graphics2D g2d = (Graphics2D)window;
-        //g2d.rotate(Math.toRadians(rotation + 90), getPosX() + (getWidth() / 2), getPosY() + (getHeight() / 2));
-   	    //g2d.drawImage(image, (int)getPosX(), (int)getPosY(), getWidth(), getHeight(), null);
-   	    //g2d.dispose();
 		window.drawImage(image, (int)getPosX(), (int)getPosY(), getWidth(), getHeight(), null);
 	}
 }

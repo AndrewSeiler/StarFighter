@@ -18,8 +18,7 @@ public class Bullet extends MovingObject {
 	}
 
 	public void move(float velX, float velY, float speed) {
-		setPosX(getPosX() + getVelX());
-		setPosY(getPosY() + getVelY());
+		setPos(getPosX() + getVelX(), getPosY() + getVelY());
 	}
 
 	public void draw(Graphics window, int rotation) {

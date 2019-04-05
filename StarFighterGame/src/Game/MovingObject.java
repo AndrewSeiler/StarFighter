@@ -19,7 +19,7 @@ public abstract class MovingObject implements Movable {
 		this.height = height;
 	}
 
-	public void setPos(int posX, int posY) {
+	public void setPos(float posX, float posY) {
 		this.posX = posX;
 		this.posY = posY;
 	}

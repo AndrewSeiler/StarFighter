@@ -35,8 +35,7 @@ public class Ship extends MovingObject {
 		setVelX(velX * speed);
 		setVelY(velY * speed);
 		
-		setPosX(getPosX() + getVelX());
-		setPosY(getPosY() + getVelY());
+		setPos(getPosX() + getVelX(), getPosY() + getVelY());
 		if (getPosX() < 0) {
 			setPosX(0);
 		}

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Aliens {
 	private ArrayList<Alien> aliens = new ArrayList<Alien>();
 	public boolean over;
-	private double counter = 0;
+	private double counter = Math.PI / 2;
 	
 	public Aliens() {
 	}
@@ -14,7 +14,7 @@ public class Aliens {
 	public void add(Alien alien) {
 		aliens.add(alien);
 		alien.setCounter(counter);
-		if (aliens.size() % 10 == 0) counter += .1;
+		if (aliens.size() % 10 == 0 && aliens.size() != 1) counter += .1;
 	}
 
 	public void draw(Graphics window, int rotation) {
@@ -40,8 +40,11 @@ public class Aliens {
 			float posY = alien.getPosY();
 			int width = alien.getWidth();
 			int height = alien.getHeight();
-			if (posX <= 0 || posX > 1000 - width || posY < 0 || posY > 632 - height) {
+			if (posX <= 0 || posX > 1000 - width || posY > 632 - height) {
 				over = true;
+			}
+			if (alien.getHealth() <= 0) {
+				aliens.remove(alien);
 			}
 		}
 	}
