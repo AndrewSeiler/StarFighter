@@ -4,8 +4,8 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
-@SuppressWarnings("serial")
 public class Main extends JFrame {
+	private static final long serialVersionUID = 1L;
 	private static final int WIDTH = 1000;
 	private static final int HEIGHT = 632;
 	private static Game game;
